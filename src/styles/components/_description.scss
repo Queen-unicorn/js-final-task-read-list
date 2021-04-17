@@ -1,0 +1,9 @@
+#description-section {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100%;
+  width: 50%;
+  border-left: 0.05rem solid $main;
+  border-right: 0.05rem solid $main;
+}

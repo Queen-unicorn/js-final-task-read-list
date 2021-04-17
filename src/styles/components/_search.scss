@@ -1,0 +1,41 @@
+#search-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 25%;
+
+  &__form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: $main;
+    gap: 1rem;
+    padding: 0.5rem 1.9rem;
+    height: 20%;
+
+    &__input {
+      padding: 0.5rem 1rem;
+      border: 0.05rem solid $main;
+      border-radius: 0.2rem;
+      height: 2rem;
+    }
+
+    &__submit {
+      background-color: $background;
+      padding: 0.5rem 1rem;
+      border-radius: 0.2rem;
+      border: none;
+      height: 2rem;
+    }
+  }
+
+  &__book-list {
+    display: flex;
+  }
+
+  &__info {
+    background-color: $main;
+    height: 15%;
+  }
+}

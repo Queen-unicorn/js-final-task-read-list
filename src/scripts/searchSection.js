@@ -8,6 +8,7 @@ export class SearchSection {
 
     this.query = "";
     this.currentPage = 0;
+    this.selectedItem;
 
     this.searchInputField = document.getElementById(
       "search-section__form__input"
@@ -19,6 +20,18 @@ export class SearchSection {
     searchSubmitButton.addEventListener("click", () => this.search());
     this.searchInputField.addEventListener("keyup", (event) => {
       if (event.key == "Enter") this.search();
+    });
+
+    this.searchSection.addEventListener("click", (event) => {
+      const target = event.target.closest(".search-section__book-list__item");
+      if (!target) return;
+
+      console.log(target);
+      if (this.selectedItem) {
+        this.selectedItem.removeAttribute("data-selected");
+      }
+      target.dataset.selected = true;
+      this.selectedItem = target;
     });
   }
 
@@ -48,7 +61,7 @@ export class SearchSection {
               book.subtitle || ""
             }</p>
             <p class="search-section__book-list__item__language">(${
-              book.language
+              book.language || "unknown"
             })</p>
         </div>
       `;

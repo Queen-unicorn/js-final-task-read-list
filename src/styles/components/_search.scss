@@ -65,6 +65,16 @@
         overflow-x: hidden;
         flex-shrink: 0;
       }
+
+      &:hover {
+        background-color: $main;
+        color: $background;
+      }
+
+      &[data-selected] {
+        background-color: $main;
+        color: $background;
+      }
     }
   }
 

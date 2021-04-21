@@ -5,5 +5,9 @@ export class App {
   constructor(fetchApi) {
     let searchSection = new SearchSection(fetchApi);
     let descriptionSection = new DescriptionSection();
+
+    document.addEventListener("bookSelect", (event) =>
+      descriptionSection.processSelectedBook(event.detail)
+    );
   }
 }

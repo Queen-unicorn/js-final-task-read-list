@@ -1,9 +1,26 @@
 #description-section {
   display: flex;
-  flex-wrap: wrap;
   flex-direction: column;
-  height: 100%;
-  width: 50%;
+  width: 45%;
   border-left: 0.05rem solid $main;
   border-right: 0.05rem solid $main;
+  padding: 2.5rem 2rem;
+  height: auto;
+  gap: 1rem;
+
+  &__title {
+    height: auto;
+  }
+
+  &__subtitle {
+    height: auto;
+    font-weight: 300;
+  }
+
+  &__info {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
 }

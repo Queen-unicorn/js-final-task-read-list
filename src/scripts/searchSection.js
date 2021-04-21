@@ -1,4 +1,4 @@
-import { ErrorHandler } from "./errorHandler";
+import * as ErrorHandler from "./errorHandler";
 
 export class SearchSection {
   constructor(api) {
@@ -13,25 +13,35 @@ export class SearchSection {
     this.searchInputField = document.getElementById(
       "search-section__form__input"
     );
-    const searchSubmitButton = document.getElementById(
+    this.searchSubmitButton = document.getElementById(
       "search-section__form__submit"
     );
 
-    searchSubmitButton.addEventListener("click", () => this.search());
+    this.searchSubmitButton.addEventListener("click", () => {
+      this.search();
+    });
     this.searchInputField.addEventListener("keyup", (event) => {
-      if (event.key == "Enter") this.search();
+      if (event.key == "Enter") {
+        this.search();
+      }
     });
 
     this.searchSection.addEventListener("click", (event) => {
       const target = event.target.closest(".search-section__book-list__item");
       if (!target) return;
 
-      console.log(target);
       if (this.selectedItem) {
         this.selectedItem.removeAttribute("data-selected");
       }
       target.dataset.selected = true;
       this.selectedItem = target;
+
+      const selectedItemId = this.selectedItem.id;
+
+      const eventSelectedBook = new CustomEvent("bookSelect", {
+        detail: this.currentBooksOnPage[selectedItemId],
+      });
+      document.dispatchEvent(eventSelectedBook);
     });
   }
 
@@ -39,23 +49,26 @@ export class SearchSection {
     this.currentPage = 0;
     this.query = this.searchInputField.value;
     if (!this.query) return;
+    this.searchSubmitButton.innerHTML = "Loading...";
 
     this.fetchApi();
   }
 
   processSearchResult(fetchedBooks) {
-    console.log(fetchedBooks);
+    this.searchSubmitButton.innerHTML = "Go";
 
     fetchedBooks.docs.forEach((book) => {
       book.id = book.key.split("/").pop();
     });
 
-    this.currentBooksOnPage = fetchedBooks.docs;
+    this.currentBooksOnPage = {};
     let booksHTML = "";
+    console.log(this.currentBooksOnPage);
 
-    for (let [index, book] of Object.entries(this.currentBooksOnPage)) {
+    for (let [index, book] of Object.entries(fetchedBooks.docs)) {
+      this.currentBooksOnPage[book.key] = book;
       booksHTML += `
-        <div class="search-section__book-list__item">
+        <div class="search-section__book-list__item" id=${book.key}>
             <p class="search-section__book-list__item__title">${book.title}</p>
             <p class="search-section__book-list__item__subtitle">${
               book.subtitle || ""
@@ -115,7 +128,7 @@ export class SearchSection {
       (fetchedBooks) => {
         this.processSearchResult(fetchedBooks);
       },
-      (error) => ErrorHandler(error)
+      (error) => ErrorHandler.handleError(error)
     );
   }
 

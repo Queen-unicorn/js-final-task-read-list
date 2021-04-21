@@ -1,5 +1,5 @@
 import { config } from "./config";
-import { ErrorHandler } from "./errorHandler";
+import * as ErrorHandler from "./errorHandler";
 
 export class FetchApi {
   search(query, page = 1) {
@@ -7,7 +7,7 @@ export class FetchApi {
 
     return fetch(url).then(
       (result) => result.json(),
-      (error) => ErrorHandler(error)
+      (error) => ErrorHandler.handleError(error)
     );
   }
 }

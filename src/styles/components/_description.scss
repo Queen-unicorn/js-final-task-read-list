@@ -4,7 +4,7 @@
   width: 45%;
   border-left: 0.05rem solid $main;
   border-right: 0.05rem solid $main;
-  padding: 2.5rem 2rem;
+  padding: 2.5rem;
   height: auto;
   gap: 1rem;
 
@@ -22,5 +22,22 @@
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
+  }
+
+  &__add-button {
+    background-color: $main;
+    padding: 0.5rem 1rem;
+    border: 0.05rem solid $background;
+    border-radius: 0.2rem;
+    height: 2rem;
+    width: 15rem;
+    transition-property: background-color, color;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-out;
+
+    &:hover {
+      background-color: $background;
+      border: 0.05rem solid $main;
+    }
   }
 }

@@ -18,6 +18,7 @@ export class DescriptionSection {
       <p>First publish year: ${book.first_publish_year || "unknown"}</p>
       <p>Year published: ${book.publish_year || "unknown"}</p>
       </div>
+      <button id="description-section__add-button">Add this book to Read List</button>
     `;
     descriptionSection.innerHTML = bookHTML;
   }

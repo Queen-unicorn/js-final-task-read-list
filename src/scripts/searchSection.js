@@ -63,12 +63,11 @@ export class SearchSection {
 
     this.currentBooksOnPage = {};
     let booksHTML = "";
-    console.log(this.currentBooksOnPage);
 
     for (let [index, book] of Object.entries(fetchedBooks.docs)) {
-      this.currentBooksOnPage[book.key] = book;
+      this.currentBooksOnPage[book.id] = book;
       booksHTML += `
-        <div class="search-section__book-list__item" id=${book.key}>
+        <div class="search-section__book-list__item" id=${book.id}>
             <p class="search-section__book-list__item__title">${book.title}</p>
             <p class="search-section__book-list__item__subtitle">${
               book.subtitle || ""

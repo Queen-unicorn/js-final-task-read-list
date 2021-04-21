@@ -62,17 +62,9 @@
         font-size: 1rem;
       }
 
-      &__language {
-        font-size: 0.875rem;
-        font-weight: 300;
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        flex-shrink: 0;
-      }
-
       &:hover {
-        background-color: $main;
-        color: $background;
+        background-color: $darkbackground;
+        color: $text;
       }
 
       &[data-selected] {

@@ -1,4 +1,5 @@
-#to-read-section {
+#to-read-section,
+.to-read-section {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -20,5 +21,66 @@
   &__book-list {
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      padding: 0.6rem 0.8rem;
+      gap: 0.2rem;
+      border: 0.05rem solid $main;
+
+      &__title {
+        font-size: 1.125rem;
+        font-weight: 700;
+      }
+
+      &__subtitle {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      &__language {
+        font-size: 0.875rem;
+        font-weight: 300;
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        flex-shrink: 0;
+      }
+
+      &:hover {
+        background-color: $darkbackground;
+        color: $text;
+      }
+
+      &[data-selected] {
+        background-color: $main;
+        color: $background;
+      }
+
+      &__buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+
+        &__mark-button,
+        &__remove-button {
+          padding: 0.3rem 0.5rem;
+          background-color: $background;
+          border: 0.05rem solid $main;
+          border-radius: 0.2rem;
+          height: 2rem;
+          transition-property: background-color, color;
+          transition-duration: 0.1s;
+          transition-timing-function: ease-out;
+
+          &:hover {
+            background-color: $main;
+            color: $background;
+            border: 0.05rem solid $background;
+          }
+        }
+      }
+    }
   }
 }

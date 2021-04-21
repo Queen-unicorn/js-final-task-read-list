@@ -40,8 +40,10 @@ export class ToReadList {
             <p class="to-read-section__book-list__item__author">${
               book.author_name || "unknown"
             }</p>
-            <button class="to-read-section__book-list__item__mark-button">Mark as read</button>
-            <button class="to-read-section__book-list__item__remove-button">Remove from list</button>
+            <div class="to-read-section__book-list__item__buttons">
+                <button class="to-read-section__book-list__item__buttons__mark-button">Mark as read</button>
+                <button class="to-read-section__book-list__item__buttons__remove-button">Remove from list</button>
+            </div>
         </div>
       `;
     }

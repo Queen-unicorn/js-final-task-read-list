@@ -54,6 +54,15 @@ export class SearchSection {
     this.fetchApi();
   }
 
+  fetchApi() {
+    this.api.search(this.query, this.currentPage + 1).then(
+      (fetchedBooks) => {
+        this.processSearchResult(fetchedBooks);
+      },
+      (error) => ErrorHandler.handleError(error)
+    );
+  }
+
   processSearchResult(fetchedBooks) {
     this.searchSubmitButton.innerHTML = "Go";
 
@@ -120,15 +129,6 @@ export class SearchSection {
       if (nextButton.dataset.disabled) return;
       this.goToPage(this.currentPage + 1);
     });
-  }
-
-  fetchApi() {
-    this.api.search(this.query, this.currentPage + 1).then(
-      (fetchedBooks) => {
-        this.processSearchResult(fetchedBooks);
-      },
-      (error) => ErrorHandler.handleError(error)
-    );
   }
 
   goToPage(currentPage) {

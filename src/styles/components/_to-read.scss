@@ -53,9 +53,9 @@
         color: $text;
       }
 
-      &[data-selected] {
-        background-color: $main;
-        color: $background;
+      &[data-read] {
+        background-color: $background;
+        color: $green;
       }
 
       &__buttons {

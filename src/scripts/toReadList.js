@@ -2,7 +2,9 @@ import { BookStorage } from "./bookStorage";
 
 export class ToReadList {
   constructor() {
+    this.bookList = document.getElementById("to-read-section__book-list");
     this.numberOfReadBooks = 0;
+    this.selectedBook;
 
     this.totalInfo = document.getElementById(
       "to-read-section__header__total-info"
@@ -10,6 +12,64 @@ export class ToReadList {
     this.selectedBooks = BookStorage.load();
     this.showBooks();
     this.updateNumberOfBooks(Object.keys(this.selectedBooks).length);
+
+    this.bookList.addEventListener("click", (event) => {
+      let target = event.target.closest(
+        ".to-read-section__book-list__item__buttons__mark-button"
+      );
+      console.log(target);
+      if (target) {
+        this.onMarkClicked(target);
+        return;
+      }
+      target = event.target.closest(
+        ".to-read-section__book-list__item__buttons__remove-button"
+      );
+      if (target) {
+        this.onRemoveClicked(target);
+        return;
+      }
+
+      target = event.target.closest(".to-read-section__book-list__item");
+      if (!target) return;
+
+      this.onDivClicked(target);
+    });
+  }
+
+  onMarkClicked(targetMarkButton) {
+    const targetDiv = targetMarkButton.closest(
+      ".to-read-section__book-list__item"
+    );
+    targetDiv.dataset.read = true;
+
+    this.selectedBooks[targetDiv.id].read = true;
+    BookStorage.save(this.selectedBooks);
+  }
+
+  onRemoveClicked(targetRemoveButton) {
+    const targetDiv = targetRemoveButton.closest(
+      ".to-read-section__book-list__item"
+    );
+    localStorage.removeItem(targetDiv.id);
+    delete this.selectedBooks[targetDiv.id];
+    this.showBooks();
+    this.updateNumberOfBooks(this.numberOfBooks - 1);
+  }
+
+  onDivClicked(targetDiv) {
+    if (this.selectedBook) {
+      this.selectedBook.removeAttribute("data-selected");
+    }
+
+    targetDiv.dataset.selected = true;
+    this.selectedBook = targetDiv;
+
+    const selectedBookId = this.selectedBook.id;
+    const eventSelectedBook = new CustomEvent("bookSelect", {
+      detail: this.selectedBooks[selectedBookId],
+    });
+    document.dispatchEvent(eventSelectedBook);
   }
 
   processSelectedBook(book) {
@@ -28,11 +88,11 @@ export class ToReadList {
   }
 
   showBooks() {
-    const bookList = document.getElementById("to-read-section__book-list");
     let stringHTML = "";
     for (let [index, book] of Object.entries(this.selectedBooks)) {
+      const isRead = book.read ? "data-read" : "";
       stringHTML += `
-        <div class="to-read-section__book-list__item">
+        <div class="to-read-section__book-list__item" id="${book.id}" ${isRead}>
             <p class="to-read-section__book-list__item__title">${book.title}</p>
             <p class="to-read-section__book-list__item__subtitle">${
               book.subtitle || ""
@@ -47,6 +107,6 @@ export class ToReadList {
         </div>
       `;
     }
-    bookList.innerHTML = stringHTML;
+    this.bookList.innerHTML = stringHTML;
   }
 }

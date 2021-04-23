@@ -3,13 +3,19 @@ import { BookStorage } from "./bookStorage";
 export class ToReadList {
   constructor() {
     this.bookList = document.getElementById("to-read-section__book-list");
-    this.numberOfReadBooks = 0;
+    this.selectedBooks = BookStorage.load();
+    this.numberOfReadBooks = (() => {
+      let counter = 0;
+      for (let [index, book] of Object.entries(this.selectedBooks)) {
+        if (book.read) counter++;
+      }
+      return counter;
+    })();
     this.selectedBook;
 
     this.totalInfo = document.getElementById(
       "to-read-section__header__total-info"
     );
-    this.selectedBooks = BookStorage.load();
     this.showBooks();
     this.updateNumberOfBooks(Object.keys(this.selectedBooks).length);
 
@@ -41,20 +47,37 @@ export class ToReadList {
     const targetDiv = targetMarkButton.closest(
       ".to-read-section__book-list__item"
     );
-    targetDiv.dataset.read = true;
+    if (this.selectedBooks[targetDiv.id].read !== true) {
+      this.updateNumberOfBooks(this.numberOfBooks, this.numberOfReadBooks + 1);
+      targetMarkButton.innerText = "Mark as unread";
 
-    this.selectedBooks[targetDiv.id].read = true;
-    BookStorage.save(this.selectedBooks);
+      this.selectedBooks[targetDiv.id].read = true;
+      BookStorage.save(this.selectedBooks);
+      targetDiv.dataset.read = true;
+    } else {
+      this.updateNumberOfBooks(this.numberOfBooks, this.numberOfReadBooks - 1);
+      this.selectedBooks[targetDiv.id].read = false;
+      targetMarkButton.innerText = "Mark as read";
+      BookStorage.save(this.selectedBooks);
+      targetDiv.dataset.read = false;
+    }
   }
 
   onRemoveClicked(targetRemoveButton) {
     const targetDiv = targetRemoveButton.closest(
       ".to-read-section__book-list__item"
     );
-    localStorage.removeItem(targetDiv.id);
-    delete this.selectedBooks[targetDiv.id];
+    const bookId = targetDiv.id;
+    this.updateNumberOfBooks(
+      this.numberOfBooks - 1,
+      this.selectedBooks[bookId].read
+        ? this.numberOfReadBooks - 1
+        : this.numberOfReadBooks
+    );
+
+    localStorage.removeItem(bookId);
+    delete this.selectedBooks[bookId];
     this.showBooks();
-    this.updateNumberOfBooks(this.numberOfBooks - 1);
   }
 
   onDivClicked(targetDiv) {
@@ -81,8 +104,12 @@ export class ToReadList {
     this.showBooks();
   }
 
-  updateNumberOfBooks(numberOfBooks) {
+  updateNumberOfBooks(
+    numberOfBooks,
+    numberOfReadBooks = this.numberOfReadBooks
+  ) {
     this.numberOfBooks = numberOfBooks;
+    this.numberOfReadBooks = numberOfReadBooks;
     const stringHTML = `${numberOfBooks} book(s), ${this.numberOfReadBooks} read`;
     this.totalInfo.innerText = stringHTML;
   }
@@ -90,7 +117,8 @@ export class ToReadList {
   showBooks() {
     let stringHTML = "";
     for (let [index, book] of Object.entries(this.selectedBooks)) {
-      const isRead = book.read ? "data-read" : "";
+      const isRead = book.read ? "data-read=true" : "";
+      const isReadForButton = book.read ? "Mark as unread" : "Mark as read";
       stringHTML += `
         <div class="to-read-section__book-list__item" id="${book.id}" ${isRead}>
             <p class="to-read-section__book-list__item__title">${book.title}</p>
@@ -101,7 +129,7 @@ export class ToReadList {
               book.author_name || "unknown"
             }</p>
             <div class="to-read-section__book-list__item__buttons">
-                <button class="to-read-section__book-list__item__buttons__mark-button">Mark as read</button>
+                <button class="to-read-section__book-list__item__buttons__mark-button">${isReadForButton}</button>
                 <button class="to-read-section__book-list__item__buttons__remove-button">Remove from list</button>
             </div>
         </div>

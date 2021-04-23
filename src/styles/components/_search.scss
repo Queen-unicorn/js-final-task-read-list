@@ -14,7 +14,7 @@
     align-items: center;
     background-color: $main;
     gap: 1rem;
-    padding: 1.9rem;
+    padding: 1.9rem 1rem;
 
     &__input {
       padding: 0.5rem 1rem;
@@ -32,6 +32,7 @@
       transition-property: background-color, color;
       transition-duration: 0.1s;
       transition-timing-function: ease-out;
+      min-width: 6rem;
 
       &:hover {
         background-color: $main;

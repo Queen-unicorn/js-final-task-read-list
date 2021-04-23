@@ -26,6 +26,7 @@ export class DescriptionSection {
       detail: book,
     });
     addButton.addEventListener("click", () => {
+      book.read = false;
       document.dispatchEvent(eventAddBook);
     });
   }

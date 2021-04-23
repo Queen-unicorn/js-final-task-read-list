@@ -53,7 +53,7 @@
         color: $text;
       }
 
-      &[data-read] {
+      &[data-read="true"] {
         background-color: $background;
         color: $green;
       }
@@ -73,12 +73,16 @@
           transition-property: background-color, color;
           transition-duration: 0.1s;
           transition-timing-function: ease-out;
+        }
 
-          &:hover {
-            background-color: $main;
-            color: $background;
-            border: 0.05rem solid $background;
-          }
+        &__mark-button:hover {
+          background-color: $main;
+          color: $background;
+        }
+
+        &__remove-button:hover {
+          background-color: $red;
+          color: $background;
         }
       }
     }

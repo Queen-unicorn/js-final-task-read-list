@@ -4,6 +4,7 @@ export class ToReadList {
   constructor() {
     this.bookList = document.getElementById("to-read-section__book-list");
     this.selectedBooks = BookStorage.load();
+
     this.numberOfReadBooks = (() => {
       let counter = 0;
       for (let [index, book] of Object.entries(this.selectedBooks)) {
@@ -74,9 +75,15 @@ export class ToReadList {
         ? this.numberOfReadBooks - 1
         : this.numberOfReadBooks
     );
+    console.log(bookId);
+    const addButton = document.getElementById(
+      "description-section__add-button"
+    );
+    addButton.dataset.disable = false;
 
-    localStorage.removeItem(bookId);
+    console.log(JSON.stringify(localStorage["booksInReadList"]));
     delete this.selectedBooks[bookId];
+    BookStorage.save(this.selectedBooks);
     this.showBooks();
   }
 

@@ -1,3 +1,5 @@
+import { BookStorage } from "./bookStorage";
+
 export class DescriptionSection {
   processSelectedBook(item) {
     this.showDescription(item);
@@ -5,6 +7,8 @@ export class DescriptionSection {
 
   showDescription(book) {
     const descriptionSection = document.getElementById("description-section");
+    const bookDiv = document.getElementById(book.id);
+    const selectedBooks = BookStorage.load();
 
     const bookHTML = `
       <h2 id="description-section__title">${book.title}</h2>
@@ -19,15 +23,25 @@ export class DescriptionSection {
       <button id="description-section__add-button">Add this book to Read List</button>
     `;
     descriptionSection.innerHTML = bookHTML;
+
     const addButton = document.getElementById(
       "description-section__add-button"
     );
     const eventAddBook = new CustomEvent("addBook", {
       detail: book,
     });
+    if (bookDiv.dataset.isInList) {
+      addButton.dataset.disable = true;
+    }
     addButton.addEventListener("click", () => {
-      book.read = false;
-      document.dispatchEvent(eventAddBook);
+      if (bookDiv.dataset.isInList) {
+        addButton.dataset.disable = true;
+      } else {
+        addButton.dataset.disable = true;
+        bookDiv.dataset.isInList = true;
+        book.read = false;
+        document.dispatchEvent(eventAddBook);
+      }
     });
   }
 }

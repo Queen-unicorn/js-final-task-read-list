@@ -8,6 +8,7 @@
   height: 100%;
   gap: 1rem;
   overflow-y: scroll;
+  background-color: $lightbackground;
 
   &__title {
     height: auto;
@@ -45,6 +46,16 @@
     &:hover {
       background-color: $background;
       border: 0.05rem solid $main;
+    }
+
+    &[data-disable="true"] {
+      background-color: $lightgray;
+      border: none;
+
+      &:hover {
+        background-color: $lightgray;
+        border: none;
+      }
     }
   }
 }

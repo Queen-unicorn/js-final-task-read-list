@@ -48,7 +48,13 @@ export class SearchSection {
   search() {
     this.currentPage = 0;
     this.query = this.searchInputField.value;
-    if (!this.query) return;
+    if (!this.query) {
+      this.searchInputField.dataset.isEmpty = true;
+      return;
+    } else {
+      this.searchInputField.dataset.isEmpty = false;
+    }
+
     this.searchSubmitButton.innerHTML = "Loading...";
 
     this.fetchApi();

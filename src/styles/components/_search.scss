@@ -21,6 +21,10 @@
       border: 0.05rem solid $main;
       border-radius: 0.2rem;
       height: 2rem;
+
+      &[data-is-empty="true"] {
+        border: 0.05rem solid $red;
+      }
     }
 
     &__submit {

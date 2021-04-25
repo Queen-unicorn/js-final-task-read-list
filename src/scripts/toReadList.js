@@ -48,6 +48,7 @@ export class ToReadList {
     const targetDiv = targetMarkButton.closest(
       ".to-read-section__book-list__item"
     );
+
     if (this.selectedBooks[targetDiv.id].read !== true) {
       this.updateNumberOfBooks(this.numberOfBooks, this.numberOfReadBooks + 1);
       targetMarkButton.innerText = "Mark as unread";
@@ -79,7 +80,7 @@ export class ToReadList {
     const addButton = document.getElementById(
       "description-section__add-button"
     );
-    addButton.dataset.disable = false;
+    if (addButton) addButton.dataset.disable = false;
 
     console.log(JSON.stringify(localStorage["booksInReadList"]));
     delete this.selectedBooks[bookId];

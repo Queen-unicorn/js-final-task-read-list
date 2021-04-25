@@ -67,6 +67,11 @@
         font-size: 1rem;
       }
 
+      &__language {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+
       &:hover {
         background-color: $darkbackground;
         color: $text;

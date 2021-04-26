@@ -1,9 +1,9 @@
 import { BookStorage } from "./bookStorage";
 
 export class ToReadList {
-  constructor() {
+  constructor(selectedBooks) {
     this.bookList = document.getElementById("to-read-section__book-list");
-    this.selectedBooks = BookStorage.load();
+    this.selectedBooks = selectedBooks;
 
     this.numberOfReadBooks = (() => {
       let counter = 0;
@@ -21,26 +21,7 @@ export class ToReadList {
     this.updateNumberOfBooks(Object.keys(this.selectedBooks).length);
 
     this.bookList.addEventListener("click", (event) => {
-      let target = event.target.closest(
-        ".to-read-section__book-list__item__buttons__mark-button"
-      );
-
-      if (target) {
-        this.onMarkClicked(target);
-        return;
-      }
-      target = event.target.closest(
-        ".to-read-section__book-list__item__buttons__remove-button"
-      );
-      if (target) {
-        this.onRemoveClicked(target);
-        return;
-      }
-
-      target = event.target.closest(".to-read-section__book-list__item");
-      if (!target) return;
-
-      this.onDivClicked(target);
+      this.onBookListClicked(event);
     });
   }
 
@@ -70,17 +51,18 @@ export class ToReadList {
       ".to-read-section__book-list__item"
     );
     const bookId = targetDiv.id;
+
+    const onRemoveClick = new CustomEvent("onRemoveClick", {
+      detail: bookId,
+    });
+    document.dispatchEvent(onRemoveClick);
+
     this.updateNumberOfBooks(
       this.numberOfBooks - 1,
       this.selectedBooks[bookId].read
         ? this.numberOfReadBooks - 1
         : this.numberOfReadBooks
     );
-
-    const addButton = document.getElementById(
-      "description-section__add-button"
-    );
-    if (addButton) addButton.dataset.disable = false;
 
     delete this.selectedBooks[bookId];
     BookStorage.save(this.selectedBooks);
@@ -100,6 +82,29 @@ export class ToReadList {
       detail: this.selectedBooks[selectedBookId],
     });
     document.dispatchEvent(eventSelectedBook);
+  }
+
+  onBookListClicked(event) {
+    let target = event.target.closest(
+      ".to-read-section__book-list__item__buttons__mark-button"
+    );
+
+    if (target) {
+      this.onMarkClicked(target);
+      return;
+    }
+    target = event.target.closest(
+      ".to-read-section__book-list__item__buttons__remove-button"
+    );
+    if (target) {
+      this.onRemoveClicked(target);
+      return;
+    }
+
+    target = event.target.closest(".to-read-section__book-list__item");
+    if (!target) return;
+
+    this.onDivClicked(target);
   }
 
   processSelectedBook(book) {

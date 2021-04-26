@@ -8,7 +8,6 @@ export class DescriptionSection {
   showDescription(book) {
     const descriptionSection = document.getElementById("description-section");
     const bookDiv = document.getElementById(book.id);
-    const selectedBooks = BookStorage.load();
 
     const bookHTML = `
       <h2 id="description-section__title">${book.title}</h2>

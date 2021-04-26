@@ -24,7 +24,7 @@ export class ToReadList {
       let target = event.target.closest(
         ".to-read-section__book-list__item__buttons__mark-button"
       );
-      console.log(target);
+
       if (target) {
         this.onMarkClicked(target);
         return;
@@ -76,13 +76,12 @@ export class ToReadList {
         ? this.numberOfReadBooks - 1
         : this.numberOfReadBooks
     );
-    console.log(bookId);
+
     const addButton = document.getElementById(
       "description-section__add-button"
     );
     if (addButton) addButton.dataset.disable = false;
 
-    console.log(JSON.stringify(localStorage["booksInReadList"]));
     delete this.selectedBooks[bookId];
     BookStorage.save(this.selectedBooks);
     this.showBooks();

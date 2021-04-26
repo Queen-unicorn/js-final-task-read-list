@@ -8,7 +8,8 @@ export class SearchSection {
 
     this.query = "";
     this.currentPage = 0;
-    this.selectedItem;
+    this.foundBooksNum = 0;
+    this.selectedBookItem;
 
     this.searchInputField = document.getElementById(
       "search-section__form__input"
@@ -27,22 +28,35 @@ export class SearchSection {
     });
 
     this.searchSection.addEventListener("click", (event) => {
-      const target = event.target.closest(".search-section__book-list__item");
-      if (!target) return;
-
-      if (this.selectedItem) {
-        this.selectedItem.removeAttribute("data-selected");
-      }
-      target.dataset.selected = true;
-      this.selectedItem = target;
-
-      const selectedItemId = this.selectedItem.id;
-
-      const eventSelectedBook = new CustomEvent("bookSelect", {
-        detail: this.currentBooksOnPage[selectedItemId],
-      });
-      document.dispatchEvent(eventSelectedBook);
+      this.onBookItemClick(event);
     });
+
+    this.searchSection.addEventListener("scroll", (event) => {
+      if (
+        this.searchSection.scrollTop + this.searchSection.clientHeight >=
+        this.searchSection.scrollHeight
+      ) {
+        this.loadMoreBooks();
+      }
+    });
+  }
+
+  onBookItemClick(event) {
+    const target = event.target.closest(".search-section__book-list__item");
+    if (!target) return;
+
+    if (this.selectedBookItem) {
+      this.selectedBookItem.removeAttribute("data-selected");
+    }
+    target.dataset.selected = true;
+    this.selectedBookItem = target;
+
+    const selectedBookItemId = this.selectedBookItem.id;
+
+    const eventSelectedBook = new CustomEvent("bookSelect", {
+      detail: this.currentBooksOnPage[selectedBookItemId],
+    });
+    document.dispatchEvent(eventSelectedBook);
   }
 
   search() {
@@ -57,33 +71,45 @@ export class SearchSection {
 
     this.searchSubmitButton.innerHTML = "Loading...";
 
-    this.fetchApi();
+    this.fetchApi(true);
   }
 
-  fetchApi() {
+  loadMoreBooks() {
+    this.currentPage++;
+    if (this.currentPage >= this.foundBooksNum / 100) return;
+
+    this.searchSubmitButton.innerHTML = "Loading...";
+
+    this.fetchApi(false);
+  }
+
+  fetchApi(isNewQuery) {
     this.api.search(this.query, this.currentPage + 1).then(
       (fetchedBooks) => {
-        this.processSearchResult(fetchedBooks);
+        this.processSearchResult(fetchedBooks, isNewQuery);
       },
       (error) => ErrorHandler.handleError(error)
     );
   }
 
-  processSearchResult(fetchedBooks) {
+  processSearchResult(fetchedBooks, isNewQuery) {
     this.searchSubmitButton.innerHTML = "Go";
 
     fetchedBooks.docs.forEach((book) => {
       book.id = book.key.split("/").pop();
     });
 
-    this.currentBooksOnPage = {};
+    if (isNewQuery) this.currentBooksOnPage = {};
     let booksHTML = "";
 
     for (let [index, book] of Object.entries(fetchedBooks.docs)) {
       this.currentBooksOnPage[book.id] = book;
       booksHTML += `
         <div class="search-section__book-list__item" id=${book.id}>
-            <p class="search-section__book-list__item__title">${book.title}</p>
+
+            <p class="search-section__book-list__item__title" data-index="${
+              +index + fetchedBooks.start + 1
+            }">${book.title}</p>
             <p class="search-section__book-list__item__subtitle">${
               book.subtitle || ""
             }</p>
@@ -93,52 +119,22 @@ export class SearchSection {
         </div>
       `;
     }
-    this.searchSection.innerHTML = booksHTML;
-    this.showSearchFooter(fetchedBooks.numFound);
+    if (isNewQuery) {
+      this.searchSection.innerHTML = booksHTML;
+    } else {
+      this.searchSection.innerHTML += booksHTML;
+    }
+    this.foundBooksNum = fetchedBooks.numFound;
+    this.showSearchFooter();
   }
 
-  showSearchFooter(foundBooksNum) {
+  showSearchFooter() {
     const searchFooter = document.getElementById("search-section__info");
     const footer = `
         <div id="search-section__info__numbers">
-            <p>Found: ${foundBooksNum}</p>
-            <p>Start: ${this.currentPage * 100}</p>
-            <p>Page size: 100</p>
-        </div>
-        <div id="search-section__info__navigation">
-            <p id="search-section__info__navigation__prev-button">Previous results</p>
-            <p id="search-section__info__navigation__next-button">Next results</p>
+            <p>Found: ${this.foundBooksNum} book(s)</p>
         </div>
     `;
     searchFooter.innerHTML = footer;
-
-    const prevButton = document.getElementById(
-      "search-section__info__navigation__prev-button"
-    );
-    const nextButton = document.getElementById(
-      "search-section__info__navigation__next-button"
-    );
-
-    if (this.currentPage === 0) {
-      prevButton.dataset.disabled = true;
-    }
-    if (this.currentPage === Math.ceil(foundBooksNum / 100) - 1) {
-      nextButton.dataset.disabled = true;
-    }
-
-    prevButton.addEventListener("click", () => {
-      if (prevButton.dataset.disabled) return;
-      this.goToPage(this.currentPage - 1);
-    });
-
-    nextButton.addEventListener("click", () => {
-      if (nextButton.dataset.disabled) return;
-      this.goToPage(this.currentPage + 1);
-    });
-  }
-
-  goToPage(currentPage) {
-    this.currentPage = currentPage;
-    this.fetchApi();
   }
 }

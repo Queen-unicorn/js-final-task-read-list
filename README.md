@@ -1,5 +1,7 @@
 # How to run?
 
+To run you need [parcel](https://parceljs.org/):
+
 ```
 $ parcel index.html
 ```
